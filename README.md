@@ -1,1 +1,1 @@
-# Fortnite pixel-detect bot v0.1
+# Fortnite "FortEx" pixel-detect bot v0.1
