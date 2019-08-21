@@ -1,0 +1,1 @@
+# Fortnite pixel-detect bot v0.1
