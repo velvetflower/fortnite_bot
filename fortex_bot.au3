@@ -1,14 +1,7 @@
 #include <ComboConstants.au3>
-#include "UDF\_SimpleSystem_UDF.au3"
 #include <GUIConstantsEx.au3>
-#include <GUIListBox.au3>
-#include <ProgressConstants.au3>
 #include <StaticConstants.au3>
-#include <Misc.au3>
-#include <Inet.au3>
-#Include <WinAPIEx.au3>
 #include <WinAPISys.au3>
-#include <File.au3>
 
 Global $sApp_Version = "0.1"
 Global $sGame_Version = "10"
@@ -87,7 +80,7 @@ Func _Info()
 				  Global $hWnd = WinWait("[TITLE:Fortnite]", "", 5)
 				  GUICtrlSetData($start, "Working!")
 				  WinActivate($hWnd)
-				  TryFortnite()
+				  BotInit()
 			   Else
 				  MsgBox($MB_ICONINFORMATION, "Attention", "The game window is not found!", 0,0)
 			   EndIf
@@ -168,13 +161,10 @@ Func CheckInMenu()
    Sleep(10000)
    Do
 	  FixMe()
-	  Local $CheckParachute  = PixelSearch(518+$globalx, 104+$globaly, 518+$globalx, 104+$globaly, 0x659F37, 5)
-	  Local $CheckParachute2  = PixelSearch(518+$globalx, 96+$globaly, 518+$globalx, 96+$globaly, 0x659F37, 5)
-	  Local $CheckParachute3  = PixelSearch(514+$globalx, 99+$globaly, 514+$globalx, 99+$globaly, 0x659F37, 5)
-	  If IsArray($CheckParachute) Or IsArray($CheckParachute2) Or IsArray($CheckParachute3) Then
-		 FixMe()
+	  Local $CheckParachute  = PixelSearch(519+$globalx, 102+$globaly, 519+$globalx, 102+$globaly, 0x659F37, 5)
+	  Local $CheckParachute2  = PixelSearch(514+$globalx, 97+$globaly, 514+$globalx, 97+$globaly, 0x659F37, 5)
+	  If IsArray($CheckParachute) Or IsArray($CheckParachute2) Then
 		 If GuiCtrlRead($typeGame) = "Active mode ( jump in water )" Then
-			FixMe()
 			Sleep(1000)
 			GUICtrlSetData($status, "Waiting for final stop")
 			Do
