@@ -27,7 +27,6 @@ _Info()
 GUISetState(@SW_SHOW,$info)
 
 Func _Info()
-   #Region ### START Koda GUI section ### Form=
    $info = GUICreate("FortEx Bot 0.1", 330, 226, Default, Default)
    GUISetBkColor(0xFF8080)
    $Label1 = GUICtrlCreateLabel("Fortnite Bot v" & $sApp_Version, 0, 0, 327, 28, $SS_CENTER)
@@ -77,7 +76,6 @@ Func _Info()
    $Label9 = GUICtrlCreateLabel("Bot version: " & $sApp_Version, 8, 24, 90, 17)
    $Label10 = GUICtrlCreateLabel("Game version: " & $sGame_Version, 232, 24, 90, 17)
    GUISetState(@SW_SHOW)
-   #EndRegion ### END Koda GUI section ###
 
    While 1
 	   $nMsg = GUIGetMsg()
@@ -154,7 +152,7 @@ EndFunc
 Func CheckInMenu()
    GetWinPos()
    FixMe()
-   MouseClick("left", 530+$globalx, 559+$globaly, 1)
+   MouseClick("left", 541+$globalx, 556+$globaly, 1)
    Sleep(3000)
    $inGame = 0
    Do
@@ -197,7 +195,7 @@ Func CheckInMenu()
 		 Else
 			FixMe()
 			GUICtrlSetData($status, "Sleep until jump")
-			Sleep(15000) ; спим 15 секунд и прыгает в центре карты
+			Sleep(15000)
 			Send ("{SPACE}")
 			$jumpedGood = 1
 			GUICtrlSetData($status, "Go go go!")
@@ -210,7 +208,7 @@ Func CheckInMenu()
 		 GUICtrlSetData($status, "Still not in bus!")
 	  EndIf
    Until $jumpedGood = 1
-   Do ; проверяем на смерть
+   Do
 	  FixMe()
 	  Local $CheckDeath  = PixelSearch(71+$globalx, 34+$globaly, 71+$globalx, 34+$globaly, 0xFF0016, 20)
 	  Local $CheckDeath2  = PixelSearch(72+$globalx, 31+$globaly, 72+$globalx, 31+$globaly, 0xFF0016, 20)
@@ -246,10 +244,6 @@ Func CheckInMenu()
 	  MouseClick(495+$globalx, 573+$globaly)
    EndIf
    FixMe()
-   Local $CheckLevelUp  = PixelSearch(300+$globalx, 496+$globaly, 300+$globalx, 496+$globaly, 0x243170, 10) ; скип экрана повышения
-   If IsArray($CheckLevelUp) Then
-	  MouseClick("left",300,496,1)
-   EndIf
    botInit()
 EndFunc
 
