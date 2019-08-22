@@ -2,6 +2,7 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WinAPISys.au3>
+#AutoIt3Wrapper_Run_Debug_Mode=Y
 
 Global $sApp_Version = "0.1"
 Global $sGame_Version = "10"
@@ -13,8 +14,8 @@ Global $gameCounter = 0
 Global $globalx, $globaly
 Global $g_bPaused = False
 
-HotKeySet("{F3}", "Terminate")
-HotKeySet("{F1}", "TogglePause")
+HotKeySet("{F9}", "Terminate")
+HotKeySet("{F7}", "TogglePause")
 
 _Info()
 
@@ -59,7 +60,7 @@ Func _Info()
 	$Label3 = GUICtrlCreateLabel("Turn off after this number of games played:", 24, 110, 252, 17)
 	GUICtrlSetFont(-1, 8, 800, 0, "MS Sans Serif")
 	$gameClose = GUICtrlCreateInput("999", 280, 107, 33, 21)
-	$Label8 = GUICtrlCreateLabel("F1 - Set the pause  |  F3 - Turn off FortBot", 70, 132, 200, 17)
+	$Label8 = GUICtrlCreateLabel("F7 - Set the pause  |  F9 - Turn off FortBot", 70, 132, 200, 17)
 	GUICtrlSetColor(-1, 0xFFD940)
 	$Label9 = GUICtrlCreateLabel("Bot version: " & $sApp_Version, 8, 24, 90, 17)
 	$Label10 = GUICtrlCreateLabel("Game version: " & $sGame_Version, 232, 24, 90, 17)
@@ -145,16 +146,23 @@ Func CheckInMenu()
 	MouseClick("left", 541 + $globalx, 556 + $globaly, 1)
 	Sleep(3000)
 	$inGame = 0
-	Do
-		Local $CheckLobby = PixelSearch(119 + $globalx, 13 + $globaly, 119 + $globalx, 13 + $globaly, 0xFCFCFC, 1)
-		If IsArray($CheckLobby) Then
-			GUICtrlSetData($status, "Still in lobby!")
-			Sleep(2000)
-		Else
-			GUICtrlSetData($status, "Enter the game...")
-			$inGame = 1
-		EndIf
-	Until $inGame = 1
+	Local $CheckLobby = PixelSearch(119 + $globalx, 13 + $globaly, 119 + $globalx, 13 + $globaly, 0xFCFCFC, 1)
+	If IsArray($CheckLobby) Then
+		Do
+			Local $CheckLobby = PixelSearch(119 + $globalx, 13 + $globaly, 119 + $globalx, 13 + $globaly, 0xFCFCFC, 1)
+			If IsArray($CheckLobby) Then
+				GUICtrlSetData($status, "Still in lobby!")
+				Sleep(2000)
+			Else
+				GUICtrlSetData($status, "Enter the game...")
+				$inGame = 1
+			EndIf
+		Until $inGame = 1
+	Else
+		GUICtrlSetData($status, "Can't find lobby!")
+		MouseClick("left", 103 + $globalx, 11 + $globaly)
+		Sleep(3000)
+	EndIf
 	Sleep(10000)
 	Do
 		FixMe()
@@ -235,13 +243,28 @@ Func MainGamePlay()
 	FixMe()
 	GUICtrlSetData($status, "Wait a little bit..")
 	Sleep(10000)
-	If $gameCounter < GUICtrlRead($checkTime) Then
+	$findMenu = 0
+	Do
+		Local $CheckLobby = PixelSearch(119 + $globalx, 13 + $globaly, 119 + $globalx, 13 + $globaly, 0xFCFCFC, 5)
+		If IsArray($CheckLobby) Then
+			$findMenu = 1
+		Else ; if levelup and other things
+			GUICtrlSetData($status, "Can't find lobby!")
+			Local $CheckLevelUp = PixelSearch(125 + $globalx, 529 + $globaly, 125 + $globalx, 529 + $globaly, 0x7EAEEB, 5)
+			If IsArray($CheckLevelUp) Then
+				MouseClick("left", 168 + $globalx, 538 + $globaly)
+			EndIf
+			; add here more
+			Sleep(3000)
+		EndIf
+	Until $findMenu = 1
+	If $gameCounter < GUICtrlRead($gameClose) Then
 		GUICtrlSetData($status, "Played " & $gameCounter & "/" & GUICtrlRead($gameClose))
 		Sleep(5000)
 		MainBot()
 	Else
 		GUICtrlSetData($status, "Played " & $gameCounter & "/" & GUICtrlRead($gameClose))
-		Return 1 ; not working :(
+		Return 1
 	EndIf
 EndFunc   ;==>MainGamePlay
 
@@ -249,6 +272,7 @@ Func MainBot()
 	BotInit()
 	CheckInMenu()
 EndFunc   ;==>MainBot
+
 
 
 
