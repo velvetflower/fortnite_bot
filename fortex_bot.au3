@@ -4,7 +4,7 @@
 #include <WinAPISys.au3>
 #AutoIt3Wrapper_Run_Debug_Mode=Y
 
-Global $sApp_Version = "0.1"
+Global $sApp_Version = "0.2"
 Global $sGame_Version = "10"
 
 Global $info, $inGame, $gameClose
@@ -22,7 +22,7 @@ _Info()
 GUISetState(@SW_SHOW, $info)
 
 Func _Info()
-	$info = GUICreate("FortEx Bot 0.1", 330, 226, Default, Default)
+	$info = GUICreate("FortEx Bot 0.2", 330, 226, Default, Default)
 	GUISetBkColor(0xFF8080)
 	$Label1 = GUICtrlCreateLabel("Fortnite Bot v" & $sApp_Version, 0, 0, 327, 28, $SS_CENTER)
 	GUICtrlSetFont(-1, 14, 400, 0, "MS Sans Serif")
@@ -76,7 +76,7 @@ Func _Info()
 					Global $hWnd = WinWait("[TITLE:Fortnite]", "", 5)
 					GUICtrlSetData($start, "Working!")
 					WinActivate($hWnd)
-					BotInit()
+					MainBot()
 				Else
 					MsgBox($MB_ICONINFORMATION, "Attention", "The game window is not found!", 0, 0)
 				EndIf
@@ -128,8 +128,9 @@ Func BotInit()
 		GUICtrlSetData($gameCL, $gameCounter)
 		GUICtrlSetData($status, "Prepare to launch..")
 		Sleep(3000)
-		CheckInMenu()
+		Return 1
 	Else
+		Return 0
 		MsgBox(0, "Attention", "The game window is not found!", 0, 0)
 	EndIf
 EndFunc   ;==>BotInit
@@ -206,11 +207,11 @@ Func CheckInMenu()
 			If IsArray($ConnectionError) Then
 				MouseClick(297, 340)
 				Sleep(5000)
-				BotInit() ; thats bad I know :(
+				Return 0
 			EndIf
 		EndIf
 	Until $jumpedGood = 1
-	MainGamePlay()
+	Return 1
 EndFunc   ;==>CheckInMenu
 
 Func MainGamePlay()
@@ -240,7 +241,6 @@ Func MainGamePlay()
 	GUICtrlSetData($status, "Leave the game..")
 	MouseClick("left", 558 + $globalx, 589 + $globaly, 3, 20)
 	Sleep(2000)
-	FixMe()
 	GUICtrlSetData($status, "Wait a little bit..")
 	Sleep(10000)
 	$findMenu = 0
@@ -261,19 +261,29 @@ Func MainGamePlay()
 	If $gameCounter < GUICtrlRead($gameClose) Then
 		GUICtrlSetData($status, "Played " & $gameCounter & "/" & GUICtrlRead($gameClose))
 		Sleep(5000)
-		MainBot()
+		Return 1
 	Else
 		GUICtrlSetData($status, "Played " & $gameCounter & "/" & GUICtrlRead($gameClose))
-		Return 1
+		Return 0
 	EndIf
 EndFunc   ;==>MainGamePlay
 
 Func MainBot()
-	BotInit()
-	CheckInMenu()
+	While 1
+		If BotInit() = 1 Then
+			If CheckInMenu() = 1 Then
+				If MainGamePlay() = 1 Then
+					ContinueLoop
+				Else
+					ExitLoop
+				EndIf
+			Else
+				GUICtrlSetData($status, "Error in CIM!")
+				ExitLoop
+			EndIf
+		Else
+			GUICtrlSetData($status, "Error in BotInit!")
+			ExitLoop
+		EndIf
+	WEnd
 EndFunc   ;==>MainBot
-
-
-
-
-
